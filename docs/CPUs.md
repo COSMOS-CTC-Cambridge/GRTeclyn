@@ -1,6 +1,6 @@
 Unlike in the predecessor code GRChombo, you don't have to separately build AMReX and GRTeclyn. Building an example in GRTeclyn will compile the relevant parts of AMReX too.
 
-But you should have checked that you have the set up described in [[AMReX and other prerequisites | AMReX and other prerequisites]] before trying to compile an example.
+But you should have checked that you have the set up described in [Getting started](prerequisites.md) before trying to compile an example.
 
 ## Building an example
 
@@ -26,7 +26,7 @@ which sets the build configuration variables as you wish. There is an example in
   `COMP = llvm` (for LLVM `clang++`).
 * If you don't have an MPI implementation available, set `USE_MPI = FALSE`.
 
-See the separate page [[Compiling GRTeclyn for GPUs | Compiling GRTeclyn for GPUs]] for more details on the options required for using GPUs.
+See the separate page [Building and Running on GPUs](GPUs.md) for more details on the options required for using GPUs.
 
 For more detailed build configuration information, consult the [AMReX documentation](https://amrex-codes.github.io/amrex/docs_html/BuildingAMReX.html)
 
@@ -63,4 +63,4 @@ You can run the example by passing the parameter file as the first argument. For
 mpiexec -n 4 ./main3d.gnu.MPI.OMP.ex params.txt
 ```
 
-On a cluster you will probably need to submit a jobscript for the run. Some example jobscripts can be found in [[Example system setups and jobscripts | Example system setups and jobscripts]] along with the `make.local-pre` files and module choices if relevant.
+On a cluster you will probably need to submit a jobscript for the run. Some example jobscripts can be found in [Working on HPC systems](setups.md) along with the `make.local-pre` files and module choices if relevant.

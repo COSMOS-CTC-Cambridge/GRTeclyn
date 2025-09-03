@@ -13,8 +13,8 @@ Failing that, the tests directory of AMReX, `${AMREX_HOME}/Tests`, also function
 
 There are many useful introductions to NR, but we recommend in particular the following open source resources:
 
-* [[ Living Reviews in Relativity | http://www.springer.com/gp/livingreviews/relativity/lrr-articles ]] has a dedicated section on Numerical Relativity.
-* [[ Eric Gourgoulhon's notes on NR | https://arxiv.org/abs/gr-qc/0703035 ]] give a detailed introduction to the ADM decomposition, with a focus on the geometric interpretation.
+* [Living Reviews in Relativity](http://www.springer.com/gp/livingreviews/relativity/lrr-articles) has a dedicated section on Numerical Relativity.
+* [Eric Gourgoulhon's notes on NR](https://arxiv.org/abs/gr-qc/0703035) give a detailed introduction to the ADM decomposition, with a focus on the geometric interpretation.
 
 The textbooks of Alcubierre, Baumgarte & Shapiro, and Shibata are also bookcase essentials for anyone working in NR.
 

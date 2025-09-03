@@ -2,7 +2,7 @@ Yes, we know, GRTeclyn is a *big* code. At first the number of files will seem o
 
 On this page we provide some hints on how to find your way around the code, but in the end you just have to dive in and learn as you go.
 
-Some useful references can be found in [[Useful resources | Useful resources]]. One should look at the guides on C++ classes, inheritance and templating, which are used extensively in the code - some basic knowledge of these concepts is assumed below.
+Some useful references can be found in [Useful resources](useful_resources.md). One should look at the guides on C++ classes, inheritance and templating, which are used extensively in the code - some basic knowledge of these concepts is assumed below.
 
 ## Hierarchy of GRTeclyn
 

@@ -139,7 +139,7 @@ These features are implemented in working branches or are actively being ported 
 
 ### 🔮 Forthcoming features
 
-The following features have been developed internally or in GRChombo and are expected to be ported or reimplemented in GRTeclyn. If you're interested in working on one of these, feel free to [[Contact us | Contact-us]] — we may be able to share existing code for inspiration or adaptation.
+The following features have been developed internally or in GRChombo and are expected to be ported or reimplemented in GRTeclyn. If you're interested in working on one of these, feel free to contact us — we may be able to share existing code for inspiration or adaptation.
 
 * **Fixed background metrics** — support for scalar field evolution on Schwarzschild or Kerr backgrounds using analytic metrics - by adapting the existing [GRDzhaDzha](https://github.com/GRTLCollaboration/GRDzhadzha) code to GRTeclyn.
 * **Massive vector (Proca) fields** — a matter class for evolving massive vector fields.
