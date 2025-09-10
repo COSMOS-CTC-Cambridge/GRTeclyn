@@ -1,10 +1,14 @@
+# Working on HPC systems
+
 In general you should start with an example hybrid MPI/OpenMP or GPU jobscript from your cluster documentation, and adapt it for your GRChombo run.
 
 However, some example jobs for systems we often use are collected here - to be copied at your own risk!
 
 ---
 
-## A Mac laptop (only really for debugging)
+## Mac laptop
+
+This is really for only for debugging. 
 
 Install command line tools on your Mac using the command `xcode-select --install` in the terminal.
 
@@ -19,7 +23,7 @@ then to run `./main3d.llvm.ex params.txt`.
 
 ---
 
-## Cosma8 (CPU partition)
+## Cosma8 (CPUs)
 
 The modules used
 ```
@@ -105,7 +109,9 @@ mpirun --map-by ppr:$mpi_tasks_per_node:node -np $SLURM_NTASKS $application $opt
 
 ---
 
-## Cosma8 (AMD MI300X partition)
+## Cosma8 (GPUs)
+
+### AMD MI300X partition
 
 The modules used
 ```
@@ -192,7 +198,7 @@ For example, to build GRTeclyn for the Intel GPUs:
 ```
 srun -p pvc --nodes=1 --ntasks=28 --gres=gpu:1 --time=1:00:00 --pty bash
 ``` 
-This will give you a quarter of the node and 1 GPU for 1 hour (each node has 4 GPUs and 112 cores spread over 2 sockets). If you want your own node add `--exclusive` and change to `--gres=gpu:4`. Do not build GRTeclyn on the head node if you want to run on the Intel GPUs - it is a different architecture. 
+This will give you a quarter of the node and 1 GPU for 1 hour (each node has 4 GPUs and 112 cores spread over 2 sockets). If you want your own node add `--exclusive` and change to `--gres=gpu:4`. Do not build GRTeclyn on the head node if you want to run on the Intel GPUs - it has a different architecture. 
 
 2. Source the environment from the git repo `swirles-training`:
 ```
