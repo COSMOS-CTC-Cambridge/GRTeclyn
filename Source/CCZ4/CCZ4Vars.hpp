@@ -150,6 +150,7 @@ class CCZ4Vars
         }
     }
 
+    // NOLINTNEXTLINE(cppcoreguidelines-avoid-const-or-ref-data-members)
     const amrex::CellData<amrex::Real> &cell_data;
 };
 

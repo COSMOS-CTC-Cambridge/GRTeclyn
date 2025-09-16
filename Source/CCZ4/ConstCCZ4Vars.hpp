@@ -73,6 +73,7 @@ class ConstCCZ4Vars
         return cell_data[c_B1 + i];
     }
 
+    // NOLINTNEXTLINE(cppcoreguidelines-avoid-const-or-ref-data-members)
     const amrex::CellData<const amrex::Real> &cell_data;
 };
 

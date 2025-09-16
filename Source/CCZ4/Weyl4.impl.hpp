@@ -28,7 +28,7 @@ Weyl4::operator()(int ix, int iy, int iz,
     const Tensor<4, amrex::Real> d2_h =
         m_deriv.diff2_tensor(ix, iy, iz, state, c_h11);
     const auto h_UU  = CCZ4Geometry::compute_inverse_metric(vars);
-    const auto chris = TensorAlgebra::compute_christoffel(d1.h, h_UU);
+    const auto chris = CCZ4Geometry::compute_christoffel(d1, h_UU);
 
     // Get the coordinates
     const Coordinates coords(amrex::IntVect(ix, iy, iz), m_dx, m_center);
@@ -122,7 +122,7 @@ AMREX_GPU_DEVICE AMREX_FORCE_INLINE EBFields_t Weyl4::compute_EB_fields(
 
     // Compute full spatial Christoffel symbols
     const Tensor<3, amrex::Real> chris_phys =
-        CCZ4Geometry::compute_phys_chris(d1.chi, vars, h_UU, chris.ULL);
+        CCZ4Geometry::compute_phys_chris(d1.chi(), vars, h_UU, chris.ULL);
 
     // Extrinsic curvature and corresponding covariant and partial derivatives
     FOR (i, j)
@@ -133,10 +133,10 @@ AMREX_GPU_DEVICE AMREX_FORCE_INLINE EBFields_t Weyl4::compute_EB_fields(
         FOR (k)
         {
             d1_K_tensor[i][j][k] =
-                d1.A[i][j][k] / vars.chi() -
-                d1.chi[k] / vars.chi() * K_tensor[i][j] +
-                1. / 3. * d1.h[i][j][k] * vars.K() / vars.chi() +
-                1. / 3. * vars.h(i, j) * d1.K[k] / vars.chi();
+                d1.A(i, j)[k] / vars.chi() -
+                d1.chi()[k] / vars.chi() * K_tensor[i][j] +
+                1. / 3. * d1.h(i, j)[k] * vars.K() / vars.chi() +
+                1. / 3. * vars.h(i, j) * d1.K()[k] / vars.chi();
         }
     }
     // covariant derivative of K

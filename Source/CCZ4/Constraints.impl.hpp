@@ -61,7 +61,7 @@ Constraints::operator()(int ix, int iy, int iz,
         m_deriv.diff2_tensor(ix, iy, iz, state, c_h11);
 
     const auto h_UU  = CCZ4Geometry::compute_inverse_metric(vars);
-    const auto chris = TensorAlgebra::compute_christoffel(d1.h, h_UU);
+    const auto chris = CCZ4Geometry::compute_christoffel(d1, h_UU);
 
     constraints_t out =
         constraint_equations(vars, d1, d2_chi, d2_h, h_UU, chris);
@@ -103,7 +103,7 @@ Constraints::constraints_t Constraints::constraint_equations(
         Tensor<3, amrex::Real> covd_A;
         FOR (i, j, k)
         {
-            covd_A[i][j][k] = d1.A[j][k][i];
+            covd_A[i][j][k] = d1.A(j, k)[i];
             FOR (l)
             {
                 covd_A[i][j][k] += -chris.ULL[l][i][j] * vars.A(l, k) -
@@ -112,7 +112,7 @@ Constraints::constraints_t Constraints::constraint_equations(
         }
         FOR (i)
         {
-            out.Mom[i]           = -(GR_SPACEDIM - 1.) * d1.K[i] / GR_SPACEDIM;
+            out.Mom[i] = -(GR_SPACEDIM - 1.) * d1.K()[i] / GR_SPACEDIM;
             out.Mom_abs_terms[i] = std::abs(out.Mom[i]);
         }
         Tensor<1, amrex::Real> covd_A_term = 0.0;
@@ -121,7 +121,7 @@ Constraints::constraints_t Constraints::constraint_equations(
         {
             covd_A_term[i] += h_UU[j][k] * covd_A[k][j][i];
             d1_chi_term[i] += -GR_SPACEDIM * h_UU[j][k] * vars.A(i, j) *
-                              d1.chi[k] / (2.0 * vars.chi());
+                              d1.chi()[k] / (2.0 * vars.chi());
         }
         FOR (i)
         {

@@ -56,7 +56,7 @@ class MovingPunctureGauge
               const CCZ4D2Vars &d2, const CCZ4AdvecVars &advec) const
     // NOLINTEND(bugprone-easily-swappable-parameters)
     {
-        amrex::Real rhs_lapse = m_params.lapse_advec_coeff * advec.lapse -
+        amrex::Real rhs_lapse = m_params.lapse_advec_coeff * advec.lapse() -
                                 m_params.lapse_coeff *
                                     pow(vars.lapse(), m_params.lapse_power) *
                                     (vars.K() - 2.0 * vars.Theta());
@@ -66,10 +66,10 @@ class MovingPunctureGauge
         Tensor<1, amrex::Real> rhs_B;
         FOR (i)
         {
-            rhs_shift[i] = m_params.shift_advec_coeff * advec.shift[i] +
+            rhs_shift[i] = m_params.shift_advec_coeff * advec.shift(i) +
                            m_params.shift_Gamma_coeff * vars.B(i);
-            rhs_B[i] = m_params.shift_advec_coeff * advec.B[i] -
-                       m_params.shift_advec_coeff * advec.Gamma[i] +
+            rhs_B[i] = m_params.shift_advec_coeff * advec.B(i) -
+                       m_params.shift_advec_coeff * advec.Gamma(i) +
                        rhs.Gamma(i) - m_params.eta * vars.B(i);
         }
         rhs.store_shift(rhs_shift);
