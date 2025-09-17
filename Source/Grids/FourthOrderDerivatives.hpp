@@ -396,7 +396,8 @@ class FourthOrderDerivatives
     }
 
     AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-    add_dissipation(int ix, int iy, int iz, CCZ4Vars &rhs,
+    add_dissipation(int ix, int iy, int iz, 
+                    const amrex::CellData<amrex::Real> &rhs,
                     const amrex::Array4<amrex::Real const> &state,
                     const double sigma_coeff, int num_vars = NUM_VARS) const
     {
@@ -404,8 +405,7 @@ class FourthOrderDerivatives
         {
             amrex::Real diss =
                 calculate_dissipation(ix, iy, iz, state, sigma_coeff, ivar);
-            amrex::Real rhs_plus_diss = rhs.get_var(ivar) + diss;
-            rhs.store_var(rhs_plus_diss, ivar);
+            rhs[ivar] += diss;
         }
     }
 };

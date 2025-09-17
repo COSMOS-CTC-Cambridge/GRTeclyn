@@ -92,7 +92,8 @@ class CCZ4RHS
   protected:
     /// Calculates the rhs for CCZ4
     AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-    rhs_equation(CCZ4Vars &rhs, const ConstCCZ4Vars &vars, const CCZ4D1Vars &d1,
+    rhs_equation(const amrex::CellData<amrex::Real> &rhs, 
+                 const ConstCCZ4Vars &vars, const CCZ4D1Vars &d1,
                  const CCZ4D2Vars &d2, const CCZ4AdvecVars &advec) const;
 };
 

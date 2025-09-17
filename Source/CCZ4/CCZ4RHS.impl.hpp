@@ -55,17 +55,17 @@ AMREX_GPU_DEVICE AMREX_FORCE_INLINE void CCZ4RHS<gauge_t, deriv_t>::operator()(
 
     const amrex::CellData<amrex::Real> &rhs_cell_data =
         rhs_state.cellData(ix, iy, iz);
-    CCZ4Vars rhs(rhs_cell_data);
+    //CCZ4Vars rhs(rhs_cell_data);
 
-    rhs_equation(rhs, vars, d1, d2, advec);
+    rhs_equation(rhs_cell_data, vars, d1, d2, advec);
 
-    m_deriv.add_dissipation(ix, iy, iz, rhs, state, m_sigma, NUM_CCZ4_VARS);
+    m_deriv.add_dissipation(ix, iy, iz, rhs_cell_data, state, m_sigma, NUM_CCZ4_VARS);
 }
 
 // NOLINTBEGIN(readability-function-cognitive-complexity)
 template <class gauge_t, class deriv_t>
 AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-CCZ4RHS<gauge_t, deriv_t>::rhs_equation(CCZ4Vars &rhs,
+CCZ4RHS<gauge_t, deriv_t>::rhs_equation(const amrex::CellData<amrex::Real> &rhs,
                                         const ConstCCZ4Vars &vars,
                                         const CCZ4D1Vars &d1,
                                         const CCZ4D2Vars &d2,
@@ -85,6 +85,7 @@ CCZ4RHS<gauge_t, deriv_t>::rhs_equation(CCZ4Vars &rhs,
     }
     else
     {
+
         FOR (i)
             Z_over_chi[i] = 0.5 * (vars.Gamma(i) - chris.contracted[i]);
     }
@@ -130,23 +131,20 @@ CCZ4RHS<gauge_t, deriv_t>::rhs_equation(CCZ4Vars &rhs,
 
     // A^{ij} A_{ij}
     amrex::Real Aij_squared = CCZ4Geometry::compute_Aij_squared(vars, h_UU);
-    amrex::Real rhs_chi =
+    rhs[c_chi] =
         advec.chi() + (2.0 / (double)GR_SPACEDIM) * vars.chi() *
                           (vars.lapse() * vars.K() - divshift);
-    rhs.store_chi(rhs_chi);
 
-    Tensor<2, amrex::Real> rhs_h;
     FOR (i, j)
     {
-        rhs_h[i][j] = advec.h(i, j) - 2.0 * vars.lapse() * vars.A(i, j) -
+        rhs[var_idx(c_h11,i,j)] = advec.h(i, j) - 2.0 * vars.lapse() * vars.A(i, j) -
                       (2.0 / (double)GR_SPACEDIM) * vars.h(i, j) * divshift;
         FOR (k)
         {
-            rhs_h[i][j] +=
+            rhs[var_idx(c_h11,i,j)] +=
                 vars.h(k, i) * d1.shift(k)[j] + vars.h(k, j) * d1.shift(k)[i];
         }
     }
-    rhs.store_h(rhs_h);
 
     Tensor<2, amrex::Real> Adot_TF;
     FOR (i, j)
@@ -156,25 +154,23 @@ CCZ4RHS<gauge_t, deriv_t>::rhs_equation(CCZ4Vars &rhs,
     }
     CCZ4Geometry::make_trace_free(Adot_TF, vars, h_UU);
 
-    Tensor<2, amrex::Real> rhs_A;
     FOR (i, j)
     {
-        rhs_A[i][j] =
+        rhs[var_idx(c_A11,i,j)] =
             advec.A(i, j) + Adot_TF[i][j] +
             vars.A(i, j) * (vars.lapse() * (vars.K() - 2.0 * vars.Theta()) -
                             (2.0 / (double)GR_SPACEDIM) * divshift);
         FOR (k)
         {
-            rhs_A[i][j] +=
+            rhs[var_idx(c_A11,i,j)] +=
                 vars.A(k, i) * d1.shift(k)[j] + vars.A(k, j) * d1.shift(k)[i];
             FOR (l)
             {
-                rhs_A[i][j] -= 2.0 * vars.lapse() * h_UU[k][l] * vars.A(i, k) *
+                rhs[var_idx(c_A11,i,j)] -= 2.0 * vars.lapse() * h_UU[k][l] * vars.A(i, k) *
                                vars.A(l, j);
             }
         }
     }
-    rhs.store_A(rhs_A);
 
     amrex::Real kappa1_times_lapse;
     if (m_params.covariantZ4)
@@ -189,20 +185,19 @@ CCZ4RHS<gauge_t, deriv_t>::rhs_equation(CCZ4Vars &rhs,
     if (m_formulation == USE_BSSN)
     {
         // ensure the Theta of CCZ4 remains at zero
-        rhs.store_Theta(0.0);
+        rhs[c_Theta] = 0.0;
         // Use hamiltonian constraint to remove ricci.scalar for BSSN update
-        amrex::Real rhs_K =
+        rhs[c_K] =
             advec.K() +
             vars.lapse() *
                 (Aij_squared + vars.K() * vars.K() / (double)GR_SPACEDIM) -
             tr_covd2lapse -
             2.0 * vars.lapse() * m_cosmological_constant /
                 ((double)GR_SPACEDIM - 1.0);
-        rhs.store_K(rhs_K);
     }
     else
     {
-        amrex::Real rhs_Theta =
+        rhs[c_Theta] =
             advec.Theta() +
             0.5 * vars.lapse() *
                 (ricci.scalar - Aij_squared +
@@ -213,9 +208,8 @@ CCZ4RHS<gauge_t, deriv_t>::rhs_equation(CCZ4Vars &rhs,
                 (((double)GR_SPACEDIM + 1) +
                  m_params.kappa2 * ((double)GR_SPACEDIM - 1.0)) -
             Z_dot_d1lapse - vars.lapse() * m_cosmological_constant;
-        rhs.store_Theta(rhs_Theta);
 
-        amrex::Real rhs_K =
+        rhs[c_K] =
             advec.K() +
             vars.lapse() *
                 (ricci.scalar + vars.K() * (vars.K() - 2.0 * vars.Theta())) -
@@ -224,7 +218,6 @@ CCZ4RHS<gauge_t, deriv_t>::rhs_equation(CCZ4Vars &rhs,
             tr_covd2lapse -
             2.0 * vars.lapse() * (double)GR_SPACEDIM /
                 ((double)GR_SPACEDIM - 1.0) * m_cosmological_constant;
-        rhs.store_K(rhs_K);
     }
 
     Tensor<1, amrex::Real> Gammadot;
@@ -262,12 +255,10 @@ CCZ4RHS<gauge_t, deriv_t>::rhs_equation(CCZ4Vars &rhs,
         }
     }
 
-    Tensor<1, amrex::Real> rhs_Gamma;
     FOR (i)
     {
-        rhs_Gamma[i] = advec.Gamma(i) + Gammadot[i];
+        rhs[c_Gamma1+i] = advec.Gamma(i) + Gammadot[i];
     }
-    rhs.store_Gamma(rhs_Gamma);
 
     m_gauge.rhs_gauge(rhs, vars, d1, d2, advec);
 }

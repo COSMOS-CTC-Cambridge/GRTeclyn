@@ -20,8 +20,8 @@ amr.plot_file = BinaryBHPlt_
 # amr.restart = BinaryBHChk_00100
 # amr.file_name_digits = 5
 
-checkpoint_interval = 100
-plot_interval = 5
+checkpoint_interval = -1
+plot_interval = -1
 
 #################################################
 # Initial Data parameters
